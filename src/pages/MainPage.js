@@ -15,7 +15,10 @@ const MainPage = () => {
     const [ todoList, setTodoList ] = useState(list)
     const [ isShow, setIsShow] = useState(false)
     const [ currentTodo, setCurrentTodo ] = useState({})
-  
+
+    const [ search, setSearch ] = useState("")
+
+    
     const handleAdd = (data) => {
       const newTodoList = [ ...todoList, { ...data, id: Date.now()} ]
       setTodoList(newTodoList)
@@ -44,23 +47,32 @@ const MainPage = () => {
       setCurrentTodo(todo)
       setCurrentTodo('')
     }
+    const searchs=()=>{
+      const newCard=todoList.filter(item => item.title.toLowerCase().includes(search.toLowerCase()))
+      return newCard
+  }
+    const handleSearchs=searchs()
+
 
     const sortByDate = () => {
-        const sorted = todoList.sort((a, b) => b.id - a.id) // desc
+        const sorted = handleSearchs.sort((a, b) => b.id - a.id) // desc
 
         setTodoList([ ...sorted ])
+    }
+    const handleSearch=(e)=>{
+      setSearch(e.target.value)
     }
 
     console.log(todoList)
 
     return ( 
         <div className="mainPage">
-            <Title size={26}>
+            <Title size={26} search={search} handleSearch={handleSearch}>
                 Todo List
             </Title>
             <button onClick={() => setIsShow(true)}>Создать таск</button>
             <button onClick={sortByDate}>sort asc</button>
-            <TodoList handleEdit={handleEdit} list={todoList} handleDelete={handleDelete} handleOpen={handleOpen}/>
+            <TodoList handleEdit={handleEdit} list={todoList} handleDelete={handleDelete} handleOpen={handleOpen}  handleSearch={handleSearchs}/>
             {
                 isShow && (
                 <ModalWindow handleEdit={handleEdit} currentTodo={currentTodo} handleAdd={handleAdd} handleClose={() => setIsShow(false)}/>
